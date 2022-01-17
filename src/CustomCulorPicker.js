@@ -1,71 +1,23 @@
-import React, {useState} from "react";
+import * as React from "react";
+import PropTypes from 'prop-types'
 import { ChromePicker } from "react-color";
 import reactCSS from "reactcss";
-import styled from "styled-components";
 import {Menu} from "@styled-icons/evaicons-solid/Menu" ;
 import {Speaker2} from "@styled-icons/fluentui-system-filled/Speaker2";
 import {MicFill} from "@styled-icons/bootstrap/MicFill";
 
-const ColorPickerComponent = () => {
-  const [colorPicker, setColorPicker] = useState(
-    {
-      viewPicker: false,
-      color: {
-          rgb:{
-              r: 33,
-              b: 143,
-              g: 34,
-              a: 1, 
-          },
-          hex:'#21228f',
-          hsl:{
-              a: 1,
-              h: 239,
-              l: 0,
-              s: 5,
-          }
-      }
-    }
-  );
+const ColorPickerComponent = (props) => {
 
- const handleOnClick = () => {
-    setColorPicker({
-      viewPicker: !colorPicker.viewPicker,
-    });
-  };
-
- const handleOnClose = () => {
-    setColorPicker({
-      viewPicker: false,
-    });
-  };
-
- const handleOnChange = (color) => {
-    setColorPicker({
-      color: {
-        rgb:color.rgb,
-        hex:color.hex,
-        hsl:color.hsl
-    },
-    });
-    // Passing the selected color to parent component
-    // setTimeout(() => {
-    //   // SetTimeout added to update color correctly
-    //   this.props.onColorSelect(color);
-    // });
-    setTimeout((props) => {
-      // SetTimeout added to update color correctly
-      props.onColorSelect(colorPicker.color);
-    });
-
-  };
-
+  //TODO: keep styles outside of the main component and propagate props
     const styles = reactCSS({
       default: {
         color: {
           width: "30px",
           height: "30px",
-        color: `rgba(${colorPicker.color.rgb.r}, ${colorPicker.color.rgb.g}, ${colorPicker.color.rgb.b}, ${colorPicker.color.rgb.a})`,
+          color: `rgba(${props.colorize.color.rgb.r}, 
+              ${props.colorize.color.rgb.g}, 
+              ${props.colorize.color.rgb.b}, 
+              ${props.colorize.color.rgb.a})`,
         },
         swatch: {
           padding: "10px",
@@ -95,20 +47,28 @@ const ColorPickerComponent = () => {
           <br />
           <MicFill style={styles.color}/>
           <br /> <br />
-        <div style={styles.swatch} onClick={handleOnClick}>
+        <div style={styles.swatch} onClick={props.onClick}>
           <Menu style={styles.color}/>
         </div>
-          {colorPicker.viewPicker ? (
+          {props.open && (
           <div style={styles.popover}>
-            <div style={styles.cover} onClick={handleOnClose} />
+            <div style={styles.cover} onClick={props.onClose} />
             <ChromePicker
-              color={colorPicker.color.rgb}
-              onChange={handleOnChange}
+              color={props.colorize.color.rgb}
+              onChange={props.onChange}
             />
           </div>
-        ) : null}
+        )}
       </div>
     );
+}
+
+ColorPickerComponent.propTypes= {
+  open: PropTypes.bool.isRequired,
+  colorize: PropTypes.object,
+  onClose: PropTypes.func,
+  onClick: PropTypes.func,
+  onChange: PropTypes.func
 }
 
 export default ColorPickerComponent;

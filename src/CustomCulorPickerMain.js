@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import * as React from "react";
 import CustomCulorPicker from "./CustomCulorPicker";
 
 const CustomCulorPickerMain = () => {
-    const [colorize, setColorize] = useState({
+
+    const [isOpen, setOpen] = React.useState(false)
+    const [colorize, setColorize] = React.useState({
         color: {
             rgb:{
                 r: 33,
@@ -20,13 +22,42 @@ const CustomCulorPickerMain = () => {
       }
     })
 
- const onChange = (event) => {
-    console.log(event);
-    setColorize({ color: event });
-  };
+    const handleOnClick = () => {
+      setOpen(prevState => {
+        return {
+         isOpen: !prevState,
+       }});
+     };
+   
+    const handleOnClose = () => {
+       setOpen({
+         isOpen: false
+       });
+     };
+   
+  /** Memorized function to avoid setting color if you set the same color */
+  const handleOnChange = React.useCallback(
+    (color) => {
+      setColorize({
+        color: {
+          rgb:color.rgb,
+          hex:color.hex,
+          hsl:color.hsl
+        },
+      }); 
+    },
+    [colorize, setColorize],
+  );
+
     return (
       <div>
-        <CustomCulorPicker onColorSelect={onChange} />
+        <CustomCulorPicker 
+          open={isOpen}
+          colorize={colorize}
+          onChange={handleOnChange}
+          onClick={handleOnClick}
+          onClose={handleOnClose}
+        />
       </div>
     );
 }
